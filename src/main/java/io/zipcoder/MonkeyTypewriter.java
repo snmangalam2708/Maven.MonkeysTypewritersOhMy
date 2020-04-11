@@ -1,5 +1,9 @@
 package io.zipcoder;
 
+import java.sql.SQLOutput;
+import java.util.ArrayList;
+import java.util.List;
+
 public class MonkeyTypewriter {
     public static void main(String[] args) {
         String introduction = "It was the best of times,\n" +
@@ -27,12 +31,43 @@ public class MonkeyTypewriter {
 
         // This wait is here because main is still a thread and we want the main method to print the finished copies
         // after enough time has passed.
+
+        SafeCopier safe = new SafeCopier(introduction);
+        UnsafeCopier unsafe = new UnsafeCopier(introduction);
+
+        List<Thread> safeThread = new ArrayList<>();
+        List<Thread> unsafeThread = new ArrayList<>();
+
+        for (int i = 0; i < 5; i++) {
+
+            safeThread.add(new Thread(safe));
+        }
+
+        for (int i = 0; i < 5; i++) {
+
+            unsafeThread.add(new Thread(unsafe));
+        }
+
+        for(Thread t : safeThread){
+
+            t.start();
+        }
+
+        for(Thread t : unsafeThread){
+
+            t.start();
+        }
+
         try {
-            Thread.sleep(1000);
+            Thread.sleep(200);
         } catch(InterruptedException e) {
             System.out.println("MAIN INTERRUPTED");
         }
 
         // Print out the copied versions here.
+
+        System.out.println("\n Safe threads: " + "\n" + safe.copied);
+        System.out.println("\n");
+        System.out.println("\n Unsafe threads: " + "\n" + unsafe.copied);
     }
 }
